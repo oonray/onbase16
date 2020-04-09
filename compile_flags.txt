@@ -1,0 +1,8 @@
+-g
+-O2
+-Wall
+-Isrc
+-rdynamic
+-DNDEBUG
+
+

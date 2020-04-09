@@ -1,0 +1,59 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Base16	src/16.h	/^typedef struct Base16{$/;"	s
+Base16	src/16.h	/^} Base16;$/;"	t	typeref:struct:Base16
+CC	makefile	/^CC=gcc$/;"	m
+CFLAGS	makefile	/^CFLAGS= -g -O2 -Wall -Isrc -rdynamic -DNDEBUG $(OPTFLAGS) $/;"	m
+CFLAGS	makefile	/^dev: CFLAGS= -g -Wall -Isrc -W all -Wextra $(OPTFLAGS)$/;"	m
+KBLU	src/colors.h	9;"	d
+KCYN	src/colors.h	11;"	d
+KGRN	src/colors.h	7;"	d
+KINF	src/colors.h	15;"	d
+KMAG	src/colors.h	10;"	d
+KNOK	src/colors.h	14;"	d
+KNRM	src/colors.h	5;"	d
+KRED	src/colors.h	6;"	d
+KWAR	src/colors.h	16;"	d
+KWHT	src/colors.h	12;"	d
+KYEL	src/colors.h	8;"	d
+LDLIBS	makefile	/^LDLIBS=-ldl -lbsd -lm $(OPTLIBS)$/;"	m
+NAME	makefile	/^NAME=base$/;"	m
+NDEBUG	tests/minunit.h	3;"	d
+OBJECTS	makefile	/^OBJECTS=$(patsubst %.c,%.o, $(SOURCES))$/;"	m
+PREFIX	makefile	/^PREFIX?=\/usr\/local$/;"	m
+RUN_TESTS	tests/minunit.h	14;"	d
+SOURCES	makefile	/^SOURCES=$(wildcard src\/**\/*.c src\/*.c)$/;"	m
+SO_TARGET	makefile	/^SO_TARGET=$(patsubst %.a,%.so, $(TARGET))$/;"	m
+TARGET	makefile	/^TARGET=build\/lib$(NAME).a$/;"	m
+TESTS	makefile	/^TESTS=$(patsubst %.c,%, $(TEST_SRC))$/;"	m
+TEST_SRC	makefile	/^TEST_SRC=$(wildcard tests\/*_tests.c)$/;"	m
+__color_h	src/colors.h	2;"	d
+__dbg_h__	src/dbg.h	2;"	d
+_base_16	src/16.h	2;"	d
+_minuit_h	tests/minunit.h	5;"	d
+alphabet	src/16.h	/^    char alphabet[16];$/;"	m	struct:Base16
+alphabet	src/16.h	/^const char alphabet[16] = {$/;"	v
+check	src/dbg.h	36;"	d
+check_debug	src/dbg.h	42;"	d
+check_mem	src/dbg.h	40;"	d
+clean_errno	src/dbg.h	18;"	d
+data	src/16.h	/^    void *data;$/;"	m	struct:Base16
+debug	src/dbg.h	13;"	d
+debug	src/dbg.h	15;"	d
+encoded	src/16.h	/^    char *encoded;$/;"	m	struct:Base16
+log_err	src/dbg.h	20;"	d
+log_info	src/dbg.h	24;"	d
+log_sucess	src/dbg.h	26;"	d
+log_warn	src/dbg.h	22;"	d
+mu_assert	tests/minunit.h	12;"	d
+mu_run_test	tests/minunit.h	13;"	d
+mu_suite_start	tests/minunit.h	11;"	d
+sentinel	src/dbg.h	38;"	d
+test_error	src/dbg.h	28;"	d
+test_info	src/dbg.h	30;"	d
+test_sucess	src/dbg.h	32;"	d
+tests_run	tests/minunit.h	/^int tests_run;$/;"	v
