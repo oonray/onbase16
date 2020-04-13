@@ -1,4 +1,4 @@
-#onlib16
+#onbase16
 
 install:
 ```
@@ -8,13 +8,13 @@ sudo make install
 
 usage:
 ```c
-#include <onlib16/16.h>
+#include <onbase16/16.h>
 
 //use stuff
 ```
 compile:
 ```
-gcc <your.c> -l onlib16  -o <yourbin>
+gcc <your.c> -l onbase16  -o <yourbin>
 ```
 
 You can grab a base16 binray from the releases.
