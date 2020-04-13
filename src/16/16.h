@@ -2,10 +2,8 @@
 #define _base_16
 
 #include <stdlib.h>
-#include "dbg.h"
 #include <stdint.h>
-
-const char *alphabet = "XoOxGwgWyzZYaBAb";
+#include "dbg.h"
 
 typedef struct Base16{
     void *data; 

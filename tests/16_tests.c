@@ -1,6 +1,6 @@
 #include "minunit.h"
 #include <string.h>
-#include <16.h>
+#include <16/16.h>
 
 Base16 *out;
 Base16 *out1;
@@ -19,7 +19,7 @@ char *test_create(){
     out = Base16_create(NULL);
     mu_assert(out->data == NULL,"Data not NULL after create.");
     mu_assert(out->encoded == NULL,"Encoded not NULL after create");
-    mu_assert(strcmp(out->alphabet,alphabet)==0,"Alphabet not set properly");
+    mu_assert(strcmp(out->alphabet,"XoOxGwgWyzZYaBAb")==0,"Alphabet not set properly");
     return NULL;
 }
 

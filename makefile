@@ -4,7 +4,8 @@ PREFIX?=/usr/local
 
 LDLIBS=-ldl -lbsd -lm $(OPTLIBS)
 
-SOURCES=$(wildcard src/**/*.c src/*.c)
+BIN16SRC=$(wildcard src/base16/*.c)
+SOURCES=$(wildcard src/16/*.c)
 OBJECTS=$(patsubst %.c,%.o, $(SOURCES))
 
 TEST_SRC=$(wildcard tests/*_tests.c)
@@ -14,7 +15,7 @@ NAME=base
 TARGET=build/lib$(NAME).a
 SO_TARGET=$(patsubst %.a,%.so, $(TARGET))
 
-all: flags $(TARGET) $(SO_TARGET) tests
+all: flags $(TARGET) $(SO_TARGET) tests binary
 
 flags:
 	@echo "$(CFLAGS)" | sed -r "s: :\n:g" >  compile_flags.txt
@@ -33,6 +34,10 @@ $(SO_TARGET): $(TARGET) $(OBJECTS)
 build:
 	@mkdir -p build
 	@mkdir -p bin
+
+binary: CFLAGS+=$(SO_TARGET)
+binary: $(BIN16SRC)
+	$(CC) -o bin/$(NAME)16 $(CFLAGS) $(BIN16SRC)
 
 .PHONY: test
 tests: CFLAGS+=$(SO_TARGET)

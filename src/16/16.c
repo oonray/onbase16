@@ -1,4 +1,4 @@
-#include <16.h>
+#include "16.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -6,7 +6,7 @@ Base16 *Base16_create(const char *inp_aphabet){
     Base16 *out = (Base16 *)calloc(1,sizeof(Base16));
     check_mem(out); 
     
-    const char *alpha = inp_aphabet == NULL ? alphabet:inp_aphabet;
+    const char *alpha = inp_aphabet == NULL ? "XoOxGwgWyzZYaBAb":inp_aphabet;
     strcpy(out->alphabet,alpha);
 
     return out;
@@ -57,7 +57,6 @@ error:
 static inline uint8_t get_pos_in_alpha(Base16 *base,char a){
     for(uint8_t i = 0;i<16;i++){
         if(base->alphabet[i]==a){
-            test_error("While %c, %c",a,i);
             return i;}
     }
     return 0;
@@ -65,7 +64,6 @@ static inline uint8_t get_pos_in_alpha(Base16 *base,char a){
 
 static inline int get_b16_data(Base16 *base,char *string,int size){
     base->data = calloc(BYTESIZE(size),sizeof(uint8_t));
-    test_error("Before %s",string);
     check_mem(base->data);
     uint8_t *Pbad = base->data;
 
@@ -73,10 +71,8 @@ static inline int get_b16_data(Base16 *base,char *string,int size){
     uint8_t al = 0;
     uint8_t bl = 0;
 
-    test_error("Before get %c,%c",*string,*string+1);
     al = get_pos_in_alpha(base,string[i]);
     bl = get_pos_in_alpha(base,string[i+1]);
-    test_error("After %x, %x",al,bl);
 
     uint8_t data =((al<<4)|bl); 
 
@@ -93,7 +89,6 @@ Base16 *Base16_decode(char *encoded,size_t size,const char *inp_alphabet){
     check(out != NULL,"Could not create Base16");
 
     char *data = encoded;
-    test_error("%s",data);
     get_b16_data(out,data,size);
 
     check(out->data != NULL,"Could not Decode data.");
