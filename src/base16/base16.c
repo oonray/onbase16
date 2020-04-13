@@ -1,7 +1,5 @@
-#ifndef _base_16
-#include "16/16.h"
-#endif
-#include "dbg.h"
+#include <onbase16/16.h>
+#include <onbase16/dbg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <ctype.h>
