@@ -6,32 +6,81 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <argp.h>
 
-char *inp_file;
-char *out_file;
-bool ed[] = {false,false};
-char *xfoa[] = {NULL,NULL,NULL,NULL};
+struct flags {
+    bool e;
+    bool d;
+    char *f;
+    char *x;
+    char *o;
+    char *a;
+} flags = {false,false,NULL,NULL,NULL,NULL};
 
-void *read_file(char *filename){    
-    FILE *f = fopen(filename,"rb");
+static struct argp_option options[] = {
+  {"Encode",        'e', 0,         0,  "Encode input" },
+  {"Decode",        'd', 0,         0,  "Decode input" },
+  {"InputFile",     'f', "FILE",    0,  "Take input from file" },
+  {"Data",          'x', "DATA",    0,  "Take input from stdin" },
+  {"output",        'o', "FILE",    0,  "Output to FILE instead of standard output" },
+  { 0 }
+};
+
+const char *argp_program_bug_address =
+  "<oonra@localhost>";
+
+static char doc[] =
+  "base16 -- Encode data/file using base16";
+
+static error_t parse_opt (int key, char *arg, struct argp_state *state)
+{
+  /* Get the input argument from argp_parse, which we
+     know is a pointer to our arguments structure. */
+  switch (key)
+    {
+    case 'e':
+      flags.e = true;
+      break;
+    case 'd':
+      flags.d = true;
+      break;
+    case 'x':
+      flags.x = arg;
+      break;
+    case 'f':
+      flags.f = arg;
+      break;
+    case 'o':
+      flags.o = arg;
+      break;
+    default:
+      return ARGP_ERR_UNKNOWN;
+    }
+  return 0;
+}
+
+
+int read_file(char *filename,char *buffer){   
+    log_info("Reading file %s",filename);
+    FILE *f = fopen(filename,"r");
     check(f!=NULL,"Could not open file.");
     int filelen = 0;
-    void * buffer;
 
     fseek(f, 0, SEEK_END);          
     filelen = ftell(f);             
     rewind(f);                      
     
-    buffer = (char *)malloc(filelen * sizeof(char)); 
+    buffer = (char *)calloc(1,filelen+1); 
     fread(buffer, filelen, 1, f); 
+    log_info("%s",buffer);
     fclose(f); 
-    return buffer;
+    return filelen;
 error:
-    return NULL;
+    return 0;
 }
 
 int write_file(char *filename,void *data,size_t size){
-   FILE *f = fopen(filename,"wb"); 
+   FILE *f = fopen(filename,"w"); 
    check(f!=NULL,"Could not open file");
    int ret = fwrite(data,size,1,f); 
    fclose(f);
@@ -52,107 +101,68 @@ void print_byte(void *data,int size){
     }
 }
 
-int print_help(char *name){
-    printf("%s -[edf] [data/inpfile] [-o] [outfile] [-a] [alphabet]",name);
-    printf("\nEncodes input data/file to base16.");
-    printf("\nIf no output file is specified it will printthe data to stdout");
-    printf("\n\t-h\tHelp");
-    printf("\n\t-e\tEncode");
-    printf("\n\t-d\tDecode");
-    printf("\n\t-x\tData");
-    printf("\n\t-f\tInput File");
-    printf("\n\t-o\tOutput File");
-    printf("\n\t-a\tAlphabet. If none is provided default will be used.");
-    return 0;
-}
-
+static struct argp argp = { options, parse_opt, 0, doc };
 
 int main(int argc,char *argv[]){
   int c = 0;
-  while ((c = getopt (argc, argv, "edfoax:")) != -1){
-    switch (c)
-      {
-      case 'e':
-        ed[0] = true;
-        break;
-      case 'd':
-        ed[1] = true;
-        break;
-      case 'x':
-        xfoa[0] = optarg;
-        break;
-      case 'f':
-        xfoa[1] = optarg;
-        break;
-      case 'o':
-        xfoa[2] = optarg;
-        break;
-      case 'a':
-        xfoa[3] = optarg;
-        break;
-      case '?':
-        if (optopt == 'f' || optopt == 'o' || optopt == 'a')
-          fprintf (stderr, "Option -%c requires an argument.\n", optopt); 
-        else if (isprint(optopt))
-          fprintf (stderr, "Unknown option `-%c'.\n", optopt);
-        else
-          fprintf (stderr,
-                   "Unknown option character `\\x%x'.\n",
-                   optopt);
-        print_help(argv[0]);
-        return -1;
-        break;
-      default:
-        print_help(argv[0]);
-        abort();
-        }     
-    }
+  bool error = false;
+  
+  argp_parse(&argp,argc,argv,0,0,&flags);
 
-    if(ed[0] && ed[1]){
-        log_err("You must choose eigther encode or decode!");
-        exit(-1);
+  if(flags.e && flags.d){
+        argp_error(0,"You must choose eigther encode or decode!");
+        error = true;
     } 
-    if(!ed[0] && !ed[1]){
-        log_err("Must eigter decode or encode");
+  if(!flags.e && !flags.d){
+        argp_error(0,"Must eigter decode or encode");
+        error = true;
+
     }
-    if(xfoa[0] != NULL && xfoa[1] != NULL){
-        log_err("Cannot read from file and suply data!");
-        exit(-1);
+    if(flags.x != NULL && flags.f != NULL){
+        argp_error(0,"Cannot read from file and suply data!");
+        error = true;
     }
-    if(xfoa[0] == NULL && xfoa[1] == NULL){
-        log_err("Must suply eigther file or data");
+    if(flags.x == NULL && flags.f == NULL){
+        argp_error(0,"Must suply eigther file or data");
+        error = true;
+    }
+    if(error){
+        exit(1);
     }
 
 
     Base16 *out = NULL;
 
-    if(ed[0]){
+    if(flags.e){
         log_info("encoding.");
-        if(xfoa[1]!=NULL){
-            void *data = read_file(xfoa[1]);
-            out = Base16_encode(data,sizeof(*data),xfoa[3]);
+        if(flags.f!=NULL){
+            char *data = NULL;
+            int len = read_file(flags.f,data);
+            log_info("%s",data);
+            out = Base16_encode(data,len,flags.a);
         }
-        if(xfoa[0]!=NULL){
-            out = Base16_encode(xfoa[0],strlen(xfoa[0])*sizeof(char),xfoa[3]);
+        if(flags.x!=NULL){
+            out = Base16_encode(flags.x,strlen(flags.x)*sizeof(char),flags.a);
         }
-        if(xfoa[2]!=NULL){
-            write_file(xfoa[2],out->encoded,strlen(out->encoded)*sizeof(char)); 
+        if(flags.o!=NULL){
+            write_file(flags.o,out->encoded,strlen(out->encoded)*sizeof(char)); 
         }else{
             print_str(out->encoded);
         }
     }
 
-    if(ed[1]){
+    if(flags.d){
         log_info("decoding.");
-        if(xfoa[1]!=NULL){
-            void *data = read_file(xfoa[1]);
-            out = Base16_decode(data,sizeof(*data),xfoa[3]);
+        if(flags.f!=NULL){
+            char *data = NULL;
+            read_file(flags.f,data);
+            out = Base16_decode(data,strlen(data)*sizeof(char),flags.a);
         }
-        if(xfoa[0]!=NULL){
-            out = Base16_decode(xfoa[0],strlen(xfoa[0])*sizeof(char),xfoa[3]);
+        if(flags.x!=NULL){
+            out = Base16_decode(flags.x,strlen(flags.x)*sizeof(char),flags.a);
         }
-        if(xfoa[2]!=NULL){
-            write_file(xfoa[2],out->data,sizeof(*out->data));
+        if(flags.o!=NULL){
+            write_file(flags.o,out->data,sizeof(*out->data));
         }else{
             print_str(out->data);
         }

@@ -1,0 +1,15 @@
+[35m[.][0m (tests/16_tests.c:70:main) ----- RUNNING: ./tests/16_tests
+[35m[.][0m (tests/16_tests.c:63:all_tests) 
+..... 
+[35m[.][0m (tests/16_tests.c:64:all_tests) 
+..... 
+[35m[.][0m (tests/16_tests.c:33:test_encode) Value: AbYAZBBA
+[35m[.][0m (tests/16_tests.c:37:test_encode) Value: Xo
+[35m[.][0m (tests/16_tests.c:41:test_encode) Value: GoGOGxGGGwGgGWGyGzGZGYGaGBGAGbwXwowOwxwGwwwgwWwywzwZ
+[35m[.][0m (tests/16_tests.c:65:all_tests) 
+..... 
+[31m[!][0m (tests/16_tests.c:47:test_decode) deadbeef
+[31m[!][0m (tests/16_tests.c:51:test_decode) 1
+[31m[!][0m (tests/16_tests.c:55:test_decode) ABCDEFGHIJKLMNOPQRSTUVWXYZ
+[35m[.][0m (tests/16_tests.c:66:all_tests) 
+..... 
