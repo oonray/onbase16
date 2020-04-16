@@ -60,7 +60,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 }
 
 
-int read_file(char *filename,char *buffer){   
+char *read_file(char *filename){   
     log_info("Reading file %s",filename);
     FILE *f = fopen(filename,"r");
     check(f!=NULL,"Could not open file.");
@@ -70,11 +70,11 @@ int read_file(char *filename,char *buffer){
     filelen = ftell(f);             
     rewind(f);                      
     
-    buffer = (char *)calloc(1,filelen+1); 
+    char *buffer = (char *)calloc(1,filelen+1); 
     fread(buffer, filelen, 1, f); 
     log_info("%s",buffer);
     fclose(f); 
-    return filelen;
+    return buffer;
 error:
     return 0;
 }
@@ -136,10 +136,9 @@ int main(int argc,char *argv[]){
     if(flags.e){
         log_info("encoding.");
         if(flags.f!=NULL){
-            char *data = NULL;
-            int len = read_file(flags.f,data);
+            char *data = read_file(flags.f);
             log_info("%s",data);
-            out = Base16_encode(data,len,flags.a);
+            out = Base16_encode(data,strlen(data)*sizeof(char),flags.a);
         }
         if(flags.x!=NULL){
             out = Base16_encode(flags.x,strlen(flags.x)*sizeof(char),flags.a);
@@ -154,8 +153,7 @@ int main(int argc,char *argv[]){
     if(flags.d){
         log_info("decoding.");
         if(flags.f!=NULL){
-            char *data = NULL;
-            read_file(flags.f,data);
+            char *data = read_file(flags.f);
             out = Base16_decode(data,strlen(data)*sizeof(char),flags.a);
         }
         if(flags.x!=NULL){
