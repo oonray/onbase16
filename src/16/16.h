@@ -7,6 +7,7 @@
 
 typedef struct Base16{
     void *data; 
+    int size;
     char *encoded;
     char alphabet[16];
 } Base16;

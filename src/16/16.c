@@ -6,6 +6,7 @@ Base16 *Base16_create(const char *inp_aphabet){
     Base16 *out = (Base16 *)calloc(1,sizeof(Base16));
     check_mem(out); 
     
+    out->size = 0;
     const char *alpha = inp_aphabet == NULL ? "XoOxGwgWyzZYaBAb":inp_aphabet;
     strcpy(out->alphabet,alpha);
 
@@ -40,7 +41,7 @@ error:
     return -1;
 }
 
-Base16 *Base16_encode(void *data,size_t size, const char *inp_alphabet){
+Base16 *Base16_encode(void *data, size_t size, const char *inp_alphabet){
    Base16 *out = Base16_create(inp_alphabet);  
    check(out != NULL,"Could not create Base16.");
 

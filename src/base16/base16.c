@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <argp.h>
 
+typedef struct filedata {
+    char *data;
+    int lengt;
+} filedata;
+
 struct flags {
     bool e;
     bool d;
@@ -60,7 +65,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 }
 
 
-char *read_file(char *filename){   
+filedata *read_file(char *filename){   
     log_info("Reading file %s",filename);
     FILE *f = fopen(filename,"r");
     check(f!=NULL,"Could not open file.");
@@ -70,9 +75,11 @@ char *read_file(char *filename){
     filelen = ftell(f);             
     rewind(f);                      
     
-    char *buffer = (char *)calloc(1,filelen+1); 
-    fread(buffer, filelen, 1, f); 
-    log_info("%s",buffer);
+    filedata *buffer = calloc(1,sizeof(filedata)); 
+    buffer->lengt = filelen;
+    buffer->data = calloc(1,sizeof(filelen));
+    fread(buffer->data, filelen, 1, f); 
+    log_info("%s",buffer->data);
     fclose(f); 
     return buffer;
 error:
@@ -136,9 +143,9 @@ int main(int argc,char *argv[]){
     if(flags.e){
         log_info("encoding.");
         if(flags.f!=NULL){
-            char *data = read_file(flags.f);
-            log_info("%s",data);
-            out = Base16_encode(data,strlen(data)*sizeof(char),flags.a);
+            filedata *data = read_file(flags.f);
+            log_info("%s",data->data);
+            out = Base16_encode(data->data,data->lengt,flags.a);
         }
         if(flags.x!=NULL){
             out = Base16_encode(flags.x,strlen(flags.x)*sizeof(char),flags.a);
@@ -153,8 +160,8 @@ int main(int argc,char *argv[]){
     if(flags.d){
         log_info("decoding.");
         if(flags.f!=NULL){
-            char *data = read_file(flags.f);
-            out = Base16_decode(data,strlen(data)*sizeof(char),flags.a);
+            filedata *data = read_file(flags.f);
+            out = Base16_decode(data->data,strlen(data->data)*sizeof(char),flags.a);
         }
         if(flags.x!=NULL){
             out = Base16_decode(flags.x,strlen(flags.x)*sizeof(char),flags.a);
