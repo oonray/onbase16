@@ -90,6 +90,7 @@ Base16 *Base16_decode(char *encoded,size_t size,const char *inp_alphabet){
     check(out != NULL,"Could not create Base16");
 
     char *data = encoded;
+    out->size = BYTESIZE(size);
     get_b16_data(out,data,size);
 
     check(out->data != NULL,"Could not Decode data.");

@@ -66,7 +66,6 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 
 
 filedata *read_file(char *filename){   
-    log_info("Reading file %s",filename);
     FILE *f = fopen(filename,"r");
     check(f!=NULL,"Could not open file.");
     int filelen = 0;
@@ -79,14 +78,13 @@ filedata *read_file(char *filename){
     buffer->lengt = filelen;
     buffer->data = calloc(1,sizeof(filelen));
     fread(buffer->data, filelen, 1, f); 
-    log_info("%s",buffer->data);
     fclose(f); 
     return buffer;
 error:
     return 0;
 }
 
-int write_file(char *filename,void *data,size_t size){
+int write_file(char *filename,char *data,size_t size){
    FILE *f = fopen(filename,"w"); 
    check(f!=NULL,"Could not open file");
    int ret = fwrite(data,size,1,f); 
@@ -111,7 +109,6 @@ void print_byte(void *data,int size){
 static struct argp argp = { options, parse_opt, 0, doc };
 
 int main(int argc,char *argv[]){
-  int c = 0;
   bool error = false;
   
   argp_parse(&argp,argc,argv,0,0,&flags);
@@ -141,10 +138,8 @@ int main(int argc,char *argv[]){
     Base16 *out = NULL;
 
     if(flags.e){
-        log_info("encoding.");
         if(flags.f!=NULL){
             filedata *data = read_file(flags.f);
-            log_info("%s",data->data);
             out = Base16_encode(data->data,data->lengt,flags.a);
         }
         if(flags.x!=NULL){
@@ -158,16 +153,15 @@ int main(int argc,char *argv[]){
     }
 
     if(flags.d){
-        log_info("decoding.");
         if(flags.f!=NULL){
             filedata *data = read_file(flags.f);
-            out = Base16_decode(data->data,strlen(data->data)*sizeof(char),flags.a);
+            out = Base16_decode(data->data,data->lengt,flags.a);
         }
         if(flags.x!=NULL){
             out = Base16_decode(flags.x,strlen(flags.x)*sizeof(char),flags.a);
         }
         if(flags.o!=NULL){
-            write_file(flags.o,out->data,sizeof(*out->data));
+            write_file(flags.o,out->data,out->size);
         }else{
             print_str(out->data);
         }
